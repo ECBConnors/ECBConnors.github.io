@@ -143,6 +143,7 @@ const setPits = () => {
     const $newPit = $('<div>')
       .addClass('p1RowPit')
       .addClass('clickable')
+      .addClass('pit')
       .attr('id', i)
       .on('click', takeTurn);
     $('#player1Row').append($newPit)
@@ -161,6 +162,7 @@ const setPits = () => {
   for (let i = (rowLength * 2); i >= (rowLength + 1); i--) {
     const $newPit = $('<div>')
       .addClass('p2RowPit')
+      .addClass('pit')
       .attr('id', i);
     $('#player2Row').append($newPit)
     boardState.push(startStones);

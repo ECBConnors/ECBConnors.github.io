@@ -1,5 +1,5 @@
 * {
-  border: 1px solid gold;
+  /* border: 1px solid gold; */
   margin: auto;
 }
 /* html {
@@ -15,7 +15,7 @@
   display: flex;
   flex-direction: row;
   margin: auto;
-  /* background-image: url(https://inhabitat.com/wp-content/blogs.dir/1/files/2018/02/wood-1580x549.jpg); */
+  background-image: url(https://inhabitat.com/wp-content/blogs.dir/1/files/2018/02/wood-1580x549.jpg);
 }
 .sidePit {
   height: 99%;
@@ -41,4 +41,18 @@
   height: 17%;
   width: 99%;
   text-align: center;
+}
+.circle {
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid black;
+}
+.pit {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  box-shadow: inset 20px 20px 10px rgba(20, 20, 20, .4), inset -20px -20px 10px rgba(20, 20, 20, .4);
 }
