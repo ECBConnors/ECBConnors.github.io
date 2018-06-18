@@ -21,6 +21,29 @@ const render = () => {
   }
 }
 
+//check if move results in a capture
+const checkCapture = (endPit) => {
+  //criteria for capture are as follows
+  //endPit is on player's side
+  //endPit was empty (currently has 1)
+  //pit opposite endPit is not empty
+  //set num to be captured so we don't have to declare this twice later
+  let numCaptured = boardState[endPit] + boardState[rowLength * 2 - endPit];
+
+  if ((boardState[endPit] == 1) && (boardState[rowLength * 2 - endPit] > 0)) {
+    //if endPit only has 1 and is on player's side, do capture
+    if (isP1Turn && $('#' + endPit).hasClass('p1RowPit')) {
+      boardState[rowLength] += numCaptured;
+      boardState[endPit] = 0;
+      boardState[rowLength * 2 - endPit] = 0;
+    } else if (!isP1Turn && $('#' + endPit).hasClass('p2RowPit')) {
+      boardState[rowLength * 2 + 1] += numCaptured;
+      boardState[endPit] = 0;
+      boardState[rowLength * 2 - endPit] = 0;
+    }
+  }
+}
+
 //end of game screen
 const endGameScreen = () => {
   const p1Score = boardState[rowLength];
@@ -86,8 +109,8 @@ const nextTurn = () => {
       pitTotal+=boardState[i];
     }
   }
+
   //if next player has a valid move, switch turns and set clickable objects
-  console.log('pit total is ' + pitTotal);
   if (pitTotal > 0) {
     isP1Turn = (!isP1Turn);
     setClickable();
@@ -158,21 +181,33 @@ const takeTurn = (event) => {
   //empty the chosen pit in preparation for move
   boardState[chosenPit] = 0;
   //get index of pit for final stone
-  const endPit = (chosenPit + stonesChosen) % (rowLength * 2 + 2);
+  const endPit = (1*chosenPit + stonesChosen) % (rowLength * 2 + 2);
   //starting with the pit immediately following the chosen pit, place 1 stone in each pit
   for (let targetPit = (1*chosenPit + 1);targetPit <= (1*chosenPit + 1*stonesChosen); targetPit++) {
     let boardIndex = targetPit % (rowLength * 2 + 2);
     boardState[boardIndex]+=1;
   }
+  //check if player captures
+  checkCapture(endPit);
   //switch turn TODO: implement checking for repeat turn
   // isP1Turn = (!isP1Turn);
   //check if game is over
   checkIsGameOver();
+  //if game is over, follow path
   if (gameOver) {
     render();
     endGameScreen();
+  } else if ((isP1Turn && (endPit == rowLength)) || (!isP1Turn && (endPit == (rowLength * 2 + 1)))) {
+    //if player's token ended in their score pit, go again
+    //first, we flip the flag so it looks like the opposite player just went
+    isP1Turn = (!isP1Turn);
+    //then process turn result as normal
+    nextTurn();
+    //render
+    render();
   } else {
-    //check whether
+    //otherwise proceed as normal
+    //invoke function to check whether other player has legal moves, switches turn flag appropriately
     nextTurn();
     //render board
     render();
@@ -180,7 +215,5 @@ const takeTurn = (event) => {
 }
 
 $( () => {
-  console.log('test');
   setPits();
-  console.log(boardState);
 })
