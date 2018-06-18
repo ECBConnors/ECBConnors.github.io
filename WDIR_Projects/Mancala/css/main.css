@@ -1,0 +1,38 @@
+* {
+  border: 1px solid gold;
+  margin: auto;
+}
+/* html {
+  height: 100%;
+  width: 100%;
+} */
+/* body {
+  align-content: center;
+} */
+.board {
+  height: 500px;
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  margin: auto;
+}
+.sidePit {
+  height: 99%;
+  width: 15%;
+}
+.midPitContainer {
+  display: flex;
+  flex-direction: column;
+  height: 99%;
+  width: 68%;
+}
+.row {
+  display: flex;
+  flex-direction: row;
+  height: 48%;
+  width: 99%;
+}
+.rowPit {
+  height: 99%;
+  width: 15%;
+}
