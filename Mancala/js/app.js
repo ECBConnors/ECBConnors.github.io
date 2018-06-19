@@ -44,6 +44,17 @@ const checkCapture = (endPit) => {
   }
 }
 
+//reset board so game can be played again
+const resetBoard = () => {
+  boardState = [];
+  isP1Turn = true;
+  gameOver = false;
+  $('#player1Row').empty();
+  $('#player2Row').empty();
+  $('.centerPiece').empty();
+  setPits();
+}
+
 //end of game screen
 const endGameScreen = () => {
   const p1Score = boardState[rowLength];
@@ -55,6 +66,9 @@ const endGameScreen = () => {
   } else {
     $('.centerPiece').text("It's a tie!");
   }
+  const $playAgainButton = $('<button>');
+  $playAgainButton.text('Play again?').on('click', resetBoard);
+  $('.centerPiece').append($playAgainButton);
 }
 
 //set which pits are clickable

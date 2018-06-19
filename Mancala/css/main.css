@@ -16,6 +16,7 @@
   flex-direction: row;
   margin: auto;
   background-image: url(https://inhabitat.com/wp-content/blogs.dir/1/files/2018/02/wood-1580x549.jpg);
+  background-size: cover;
 }
 .sidePit {
   height: 99%;
@@ -40,7 +41,12 @@
 .centerPiece {
   height: 17%;
   width: 99%;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  font-size: 30px;
   text-align: center;
+  flex-direction: column;
 }
 .circle {
   height: 45px;
