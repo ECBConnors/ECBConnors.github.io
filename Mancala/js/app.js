@@ -8,16 +8,61 @@ let boardState = [];
 let isP1Turn = true;
 let gameOver = false;
 
+//returns a random number from 0 to 255
+const rand255 = () => {
+  return (Math.floor(Math.random() * 256));
+}
+
+const randStones = ($newPit) => {
+  let rand1 = rand255();
+  let rand2 = rand255();
+  let rand3 = rand255();
+  let translucent = 'rgba(' + rand1 + ', ' + rand2 + ', ' + rand3 + ', 0.4)';
+  let opaque = 'rgba(' + rand1 + ', ' + rand2 + ', ' + rand3 + ', 1.0)';
+  $newPit.append(
+    $('<div>')
+    .addClass('circle')
+    .css('background', translucent)
+    .css('border', '1px solid ' + opaque)
+  );
+}
+
+//sleep function to have delays between certain actions
+const sleep = (time) => {
+  return new Promise(resolve => setTimeout(resolve, time));
+}
+
 //render the number of stones into the divs on the page
 //dependency of functions down the page
 const render = () => {
-  for (let i = 0; i < boardState.length; i++) {
-    $('#' + i).text(boardState[i]);
-  }
+  // for (let i = 0; i < boardState.length; i++) {
+  //   $('#' + i).text(boardState[i]);
+  // }
   if (isP1Turn) {
     $('.centerPiece').text("Player 1's Turn");
   } else {
     $('.centerPiece').text("Player 2's Turn");
+  }
+}
+
+//render standard move
+const renderMove = (chosenPit) => {
+  //for each token in the pit, move to the next pit in sequence
+  let $chosenPit = $('#' + chosenPit);
+  for (let i = 1; i <= boardState[chosenPit]; i++) {
+    let targetPit = ((1*chosenPit + i) % (rowLength * 2 + 2));
+    $('#' + targetPit).append($chosenPit.children().eq(0));
+  }
+}
+
+//function for rendering the transferring of captured pieces to target pit
+const renderCapture = (pit1, pit2, targetPit) => {
+  let $pit1 = $('#' + pit1);
+  let $pit2 = $('#' + pit2);
+  //while either still has stones, keep moving one stone to target
+  while (($pit1.children().length > 0) || ($pit2.children().length > 0)) {
+    $('#' + targetPit).append($pit1.children().eq(0));
+    $('#' + targetPit).append($pit2.children().eq(0));
   }
 }
 
@@ -28,18 +73,21 @@ const checkCapture = (endPit) => {
   //endPit was empty (currently has 1)
   //pit opposite endPit is not empty
   //set num to be captured so we don't have to declare this twice later
-  let numCaptured = boardState[endPit] + boardState[rowLength * 2 - endPit];
+  let oppositePit = (rowLength * 2 - endPit);
+  let numCaptured = boardState[endPit] + boardState[oppositePit];
 
-  if ((boardState[endPit] == 1) && (boardState[rowLength * 2 - endPit] > 0)) {
+  if ((boardState[endPit] == 1) && (boardState[oppositePit] > 0)) {
     //if endPit only has 1 and is on player's side, do capture
     if (isP1Turn && $('#' + endPit).hasClass('p1RowPit')) {
       boardState[rowLength] += numCaptured;
       boardState[endPit] = 0;
-      boardState[rowLength * 2 - endPit] = 0;
+      boardState[oppositePit] = 0;
+      renderCapture(endPit, oppositePit, rowLength);
     } else if (!isP1Turn && $('#' + endPit).hasClass('p2RowPit')) {
       boardState[rowLength * 2 + 1] += numCaptured;
       boardState[endPit] = 0;
-      boardState[rowLength * 2 - endPit] = 0;
+      boardState[oppositePit] = 0;
+      renderCapture(endPit, oppositePit, (rowLength * 2 + 1));
     }
   }
 }
@@ -52,6 +100,7 @@ const resetBoard = () => {
   $('#player1Row').empty();
   $('#player2Row').empty();
   $('.centerPiece').empty();
+  $('.sidePit').empty();
   setPits();
 }
 
@@ -160,6 +209,10 @@ const setPits = () => {
       .addClass('pit')
       .attr('id', i)
       .on('click', takeTurn);
+      for (let j = 0; j < startStones; j++) {
+        //create new stones with random colors
+        randStones($newPit);
+      }
     $('#player1Row').append($newPit)
     boardState.push(startStones);
   }
@@ -178,6 +231,10 @@ const setPits = () => {
       .addClass('p2RowPit')
       .addClass('pit')
       .attr('id', i);
+      for (let j = 0; j < startStones; j++) {
+        //create new stones with random colors
+        randStones($newPit);
+      }
     $('#player2Row').append($newPit)
     boardState.push(startStones);
   }
@@ -194,6 +251,8 @@ const takeTurn = (event) => {
   const chosenPit = $(event.currentTarget).attr('id');
   //get number of stones in chosen pit
   const stonesChosen = boardState[chosenPit];
+  //render move
+  renderMove(chosenPit);
   //empty the chosen pit in preparation for move
   boardState[chosenPit] = 0;
   //get index of pit for final stone

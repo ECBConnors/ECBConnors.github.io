@@ -49,11 +49,11 @@
   flex-direction: column;
 }
 .circle {
-  height: 45px;
-  width: 45px;
+  height: 25px;
+  width: 25px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid black;
+  /* background: rgba(0, 0, 0, 0.4); */
+  /* border: 1px solid black; */
 }
 .pit {
   display: flex;
